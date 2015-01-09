@@ -1,0 +1,1194 @@
+I0106 19:56:26.736886  4165 caffe.cpp:99] Use GPU with device ID 0
+I0106 19:56:26.980937  4165 caffe.cpp:107] Starting Optimization
+I0106 19:56:26.981292  4165 solver.cpp:32] Initializing solver from parameters: 
+test_iter: 1000
+test_interval: 1000
+base_lr: 0.0001
+display: 1000
+max_iter: 30000
+lr_policy: "step"
+gamma: 0.1
+momentum: 0.95
+weight_decay: 0.0001
+stepsize: 5000
+snapshot: 10000
+snapshot_prefix: "cnn_tracker/affine"
+solver_mode: GPU
+net: "cnn_tracker/train_val_affine.prototxt"
+I0106 19:56:26.981334  4165 solver.cpp:67] Creating training net from net file: cnn_tracker/train_val_affine.prototxt
+I0106 19:56:26.982069  4165 net.cpp:275] The NetState phase (0) differed from the phase (1) specified by a rule in layer data
+I0106 19:56:26.982257  4165 net.cpp:39] Initializing net from parameters: 
+name: "affineRegressionNet"
+layers {
+  top: "data"
+  top: "label"
+  name: "data"
+  type: HDF5_DATA
+  hdf5_data_param {
+    source: "/media/philo/1T_HardDisk/cnn_affine_data/train.txt"
+    batch_size: 100
+  }
+  include {
+    phase: TRAIN
+  }
+}
+layers {
+  bottom: "data"
+  top: "data1"
+  top: "data2"
+  name: "slice_pair"
+  type: SLICE
+  slice_param {
+    slice_dim: 1
+    slice_point: 3
+  }
+}
+layers {
+  bottom: "data1"
+  top: "conv1"
+  name: "conv1"
+  type: CONVOLUTION
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  convolution_param {
+    num_output: 96
+    kernel_size: 7
+    stride: 2
+    weight_filler {
+      type: "xavier"
+    }
+  }
+  param: "conv1_w"
+  param: "conv1_b"
+}
+layers {
+  bottom: "conv1"
+  top: "conv1"
+  name: "relu1"
+  type: RELU
+}
+layers {
+  bottom: "conv1"
+  top: "conv2"
+  name: "conv2"
+  type: CONVOLUTION
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  convolution_param {
+    num_output: 256
+    kernel_size: 5
+    stride: 2
+    weight_filler {
+      type: "xavier"
+    }
+  }
+  param: "conv2_w"
+  param: "conv2_b"
+}
+layers {
+  bottom: "conv2"
+  top: "conv2"
+  name: "relu2"
+  type: RELU
+}
+layers {
+  bottom: "conv2"
+  top: "conv3"
+  name: "conv3"
+  type: CONVOLUTION
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  convolution_param {
+    num_output: 384
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+  }
+  param: "conv3_w"
+  param: "conv3_b"
+}
+layers {
+  bottom: "conv3"
+  top: "conv3"
+  name: "relu3"
+  type: RELU
+}
+layers {
+  bottom: "conv3"
+  top: "conv4"
+  name: "conv4"
+  type: CONVOLUTION
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  convolution_param {
+    num_output: 256
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+  }
+  param: "conv4_w"
+  param: "conv4_b"
+}
+layers {
+  bottom: "conv4"
+  top: "conv4"
+  name: "relu4"
+  type: RELU
+}
+layers {
+  bottom: "data2"
+  top: "conv1_p"
+  name: "conv1_p"
+  type: CONVOLUTION
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  convolution_param {
+    num_output: 96
+    kernel_size: 7
+    stride: 2
+    weight_filler {
+      type: "xavier"
+    }
+  }
+  param: "conv1_w"
+  param: "conv1_b"
+}
+layers {
+  bottom: "conv1_p"
+  top: "conv1_p"
+  name: "relu1_p"
+  type: RELU
+}
+layers {
+  bottom: "conv1_p"
+  top: "conv2_p"
+  name: "conv2_p"
+  type: CONVOLUTION
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  convolution_param {
+    num_output: 256
+    kernel_size: 5
+    stride: 2
+    weight_filler {
+      type: "xavier"
+    }
+  }
+  param: "conv2_w"
+  param: "conv2_b"
+}
+layers {
+  bottom: "conv2_p"
+  top: "conv2_p"
+  name: "relu2_p"
+  type: RELU
+}
+layers {
+  bottom: "conv2_p"
+  top: "conv3_p"
+  name: "conv3_p"
+  type: CONVOLUTION
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  convolution_param {
+    num_output: 384
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+  }
+  param: "conv3_w"
+  param: "conv3_b"
+}
+layers {
+  bottom: "conv3_p"
+  top: "conv3_p"
+  name: "relu3_p"
+  type: RELU
+}
+layers {
+  bottom: "conv3_p"
+  top: "conv4_p"
+  name: "conv4_p"
+  type: CONVOLUTION
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  convolution_param {
+    num_output: 256
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+  }
+  param: "conv4_w"
+  param: "conv4_b"
+}
+layers {
+  bottom: "conv4_p"
+  top: "conv4_p"
+  name: "relu4_p"
+  type: RELU
+}
+layers {
+  bottom: "conv4"
+  bottom: "conv4_p"
+  top: "concat"
+  name: "concat"
+  type: CONCAT
+  concat_param {
+    concat_dim: 1
+  }
+}
+layers {
+  bottom: "concat"
+  top: "fc5"
+  name: "fc5"
+  type: INNER_PRODUCT
+  inner_product_param {
+    num_output: 128
+    weight_filler {
+      type: "xavier"
+    }
+  }
+}
+layers {
+  bottom: "fc5"
+  top: "fc5"
+  name: "relu5"
+  type: RELU
+}
+layers {
+  bottom: "fc5"
+  top: "fc6"
+  name: "fc6"
+  type: INNER_PRODUCT
+  inner_product_param {
+    num_output: 32
+    weight_filler {
+      type: "xavier"
+    }
+  }
+}
+layers {
+  bottom: "fc6"
+  top: "fc6"
+  name: "relu6"
+  type: RELU
+}
+layers {
+  bottom: "fc6"
+  top: "fc7"
+  name: "fc7"
+  type: INNER_PRODUCT
+  inner_product_param {
+    num_output: 8
+    weight_filler {
+      type: "xavier"
+    }
+  }
+}
+layers {
+  bottom: "fc7"
+  bottom: "label"
+  top: "loss"
+  name: "loss"
+  type: EUCLIDEAN_LOSS
+}
+state {
+  phase: TRAIN
+}
+I0106 19:56:26.982406  4165 net.cpp:67] Creating Layer data
+I0106 19:56:26.982427  4165 net.cpp:356] data -> data
+I0106 19:56:26.982453  4165 net.cpp:356] data -> label
+I0106 19:56:26.982501  4165 net.cpp:96] Setting up data
+I0106 19:56:26.983122  4165 hdf5_data_layer.cpp:57] Loading filename from /media/philo/1T_HardDisk/cnn_affine_data/train.txt
+I0106 19:56:26.983214  4165 hdf5_data_layer.cpp:69] Number of files: 3
+I0106 19:56:26.983232  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_0.h5
+I0106 19:56:48.739902  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0106 19:56:48.739966  4165 hdf5_data_layer.cpp:81] output data size: 100,6,64,64
+I0106 19:56:48.739998  4165 net.cpp:103] Top shape: 100 6 64 64 (2457600)
+I0106 19:56:48.740015  4165 net.cpp:103] Top shape: 100 8 1 1 (800)
+I0106 19:56:48.740037  4165 net.cpp:67] Creating Layer slice_pair
+I0106 19:56:48.740049  4165 net.cpp:394] slice_pair <- data
+I0106 19:56:48.740069  4165 net.cpp:356] slice_pair -> data1
+I0106 19:56:48.740093  4165 net.cpp:356] slice_pair -> data2
+I0106 19:56:48.740109  4165 net.cpp:96] Setting up slice_pair
+I0106 19:56:48.744561  4165 net.cpp:103] Top shape: 100 3 64 64 (1228800)
+I0106 19:56:48.744580  4165 net.cpp:103] Top shape: 100 3 64 64 (1228800)
+I0106 19:56:48.744601  4165 net.cpp:67] Creating Layer conv1
+I0106 19:56:48.744613  4165 net.cpp:394] conv1 <- data1
+I0106 19:56:48.744627  4165 net.cpp:356] conv1 -> conv1
+I0106 19:56:48.744644  4165 net.cpp:96] Setting up conv1
+I0106 19:56:48.745652  4165 net.cpp:103] Top shape: 100 96 29 29 (8073600)
+I0106 19:56:48.745689  4165 net.cpp:67] Creating Layer relu1
+I0106 19:56:48.745705  4165 net.cpp:394] relu1 <- conv1
+I0106 19:56:48.745719  4165 net.cpp:345] relu1 -> conv1 (in-place)
+I0106 19:56:48.745734  4165 net.cpp:96] Setting up relu1
+I0106 19:56:48.745748  4165 net.cpp:103] Top shape: 100 96 29 29 (8073600)
+I0106 19:56:48.745766  4165 net.cpp:67] Creating Layer conv2
+I0106 19:56:48.745781  4165 net.cpp:394] conv2 <- conv1
+I0106 19:56:48.745796  4165 net.cpp:356] conv2 -> conv2
+I0106 19:56:48.745811  4165 net.cpp:96] Setting up conv2
+I0106 19:56:48.751588  4165 net.cpp:103] Top shape: 100 256 13 13 (4326400)
+I0106 19:56:48.751616  4165 net.cpp:67] Creating Layer relu2
+I0106 19:56:48.751628  4165 net.cpp:394] relu2 <- conv2
+I0106 19:56:48.751641  4165 net.cpp:345] relu2 -> conv2 (in-place)
+I0106 19:56:48.751655  4165 net.cpp:96] Setting up relu2
+I0106 19:56:48.751668  4165 net.cpp:103] Top shape: 100 256 13 13 (4326400)
+I0106 19:56:48.751683  4165 net.cpp:67] Creating Layer conv3
+I0106 19:56:48.751695  4165 net.cpp:394] conv3 <- conv2
+I0106 19:56:48.751709  4165 net.cpp:356] conv3 -> conv3
+I0106 19:56:48.751724  4165 net.cpp:96] Setting up conv3
+I0106 19:56:48.759564  4165 net.cpp:103] Top shape: 100 384 11 11 (4646400)
+I0106 19:56:48.759603  4165 net.cpp:67] Creating Layer relu3
+I0106 19:56:48.759615  4165 net.cpp:394] relu3 <- conv3
+I0106 19:56:48.759629  4165 net.cpp:345] relu3 -> conv3 (in-place)
+I0106 19:56:48.759655  4165 net.cpp:96] Setting up relu3
+I0106 19:56:48.759681  4165 net.cpp:103] Top shape: 100 384 11 11 (4646400)
+I0106 19:56:48.759697  4165 net.cpp:67] Creating Layer conv4
+I0106 19:56:48.759711  4165 net.cpp:394] conv4 <- conv3
+I0106 19:56:48.759723  4165 net.cpp:356] conv4 -> conv4
+I0106 19:56:48.759740  4165 net.cpp:96] Setting up conv4
+I0106 19:56:48.768008  4165 net.cpp:103] Top shape: 100 256 9 9 (2073600)
+I0106 19:56:48.768039  4165 net.cpp:67] Creating Layer relu4
+I0106 19:56:48.768051  4165 net.cpp:394] relu4 <- conv4
+I0106 19:56:48.768064  4165 net.cpp:345] relu4 -> conv4 (in-place)
+I0106 19:56:48.768079  4165 net.cpp:96] Setting up relu4
+I0106 19:56:48.768091  4165 net.cpp:103] Top shape: 100 256 9 9 (2073600)
+I0106 19:56:48.768107  4165 net.cpp:67] Creating Layer conv1_p
+I0106 19:56:48.768121  4165 net.cpp:394] conv1_p <- data2
+I0106 19:56:48.768134  4165 net.cpp:356] conv1_p -> conv1_p
+I0106 19:56:48.768151  4165 net.cpp:96] Setting up conv1_p
+I0106 19:56:48.768286  4165 net.cpp:103] Top shape: 100 96 29 29 (8073600)
+I0106 19:56:48.768304  4165 net.cpp:436] Sharing parameters 'conv1_w' owned by layer 'conv1', param index 0
+I0106 19:56:48.768333  4165 net.cpp:436] Sharing parameters 'conv1_b' owned by layer 'conv1', param index 1
+I0106 19:56:48.768348  4165 net.cpp:67] Creating Layer relu1_p
+I0106 19:56:48.768359  4165 net.cpp:394] relu1_p <- conv1_p
+I0106 19:56:48.768371  4165 net.cpp:345] relu1_p -> conv1_p (in-place)
+I0106 19:56:48.768384  4165 net.cpp:96] Setting up relu1_p
+I0106 19:56:48.768396  4165 net.cpp:103] Top shape: 100 96 29 29 (8073600)
+I0106 19:56:48.768412  4165 net.cpp:67] Creating Layer conv2_p
+I0106 19:56:48.768424  4165 net.cpp:394] conv2_p <- conv1_p
+I0106 19:56:48.768437  4165 net.cpp:356] conv2_p -> conv2_p
+I0106 19:56:48.768453  4165 net.cpp:96] Setting up conv2_p
+I0106 19:56:48.773720  4165 net.cpp:103] Top shape: 100 256 13 13 (4326400)
+I0106 19:56:48.773742  4165 net.cpp:436] Sharing parameters 'conv2_w' owned by layer 'conv2', param index 0
+I0106 19:56:48.773794  4165 net.cpp:436] Sharing parameters 'conv2_b' owned by layer 'conv2', param index 1
+I0106 19:56:48.773814  4165 net.cpp:67] Creating Layer relu2_p
+I0106 19:56:48.773828  4165 net.cpp:394] relu2_p <- conv2_p
+I0106 19:56:48.773841  4165 net.cpp:345] relu2_p -> conv2_p (in-place)
+I0106 19:56:48.773855  4165 net.cpp:96] Setting up relu2_p
+I0106 19:56:48.773867  4165 net.cpp:103] Top shape: 100 256 13 13 (4326400)
+I0106 19:56:48.773880  4165 net.cpp:67] Creating Layer conv3_p
+I0106 19:56:48.773891  4165 net.cpp:394] conv3_p <- conv2_p
+I0106 19:56:48.773906  4165 net.cpp:356] conv3_p -> conv3_p
+I0106 19:56:48.773921  4165 net.cpp:96] Setting up conv3_p
+I0106 19:56:48.781611  4165 net.cpp:103] Top shape: 100 384 11 11 (4646400)
+I0106 19:56:48.781632  4165 net.cpp:436] Sharing parameters 'conv3_w' owned by layer 'conv3', param index 0
+I0106 19:56:48.781738  4165 net.cpp:436] Sharing parameters 'conv3_b' owned by layer 'conv3', param index 1
+I0106 19:56:48.781757  4165 net.cpp:67] Creating Layer relu3_p
+I0106 19:56:48.781771  4165 net.cpp:394] relu3_p <- conv3_p
+I0106 19:56:48.781785  4165 net.cpp:345] relu3_p -> conv3_p (in-place)
+I0106 19:56:48.781800  4165 net.cpp:96] Setting up relu3_p
+I0106 19:56:48.781810  4165 net.cpp:103] Top shape: 100 384 11 11 (4646400)
+I0106 19:56:48.781826  4165 net.cpp:67] Creating Layer conv4_p
+I0106 19:56:48.781838  4165 net.cpp:394] conv4_p <- conv3_p
+I0106 19:56:48.781853  4165 net.cpp:356] conv4_p -> conv4_p
+I0106 19:56:48.781867  4165 net.cpp:96] Setting up conv4_p
+I0106 19:56:48.790524  4165 net.cpp:103] Top shape: 100 256 9 9 (2073600)
+I0106 19:56:48.790545  4165 net.cpp:436] Sharing parameters 'conv4_w' owned by layer 'conv4', param index 0
+I0106 19:56:48.790559  4165 net.cpp:436] Sharing parameters 'conv4_b' owned by layer 'conv4', param index 1
+I0106 19:56:48.790571  4165 net.cpp:67] Creating Layer relu4_p
+I0106 19:56:48.790583  4165 net.cpp:394] relu4_p <- conv4_p
+I0106 19:56:48.790596  4165 net.cpp:345] relu4_p -> conv4_p (in-place)
+I0106 19:56:48.790621  4165 net.cpp:96] Setting up relu4_p
+I0106 19:56:48.790644  4165 net.cpp:103] Top shape: 100 256 9 9 (2073600)
+I0106 19:56:48.790660  4165 net.cpp:67] Creating Layer concat
+I0106 19:56:48.790673  4165 net.cpp:394] concat <- conv4
+I0106 19:56:48.790684  4165 net.cpp:394] concat <- conv4_p
+I0106 19:56:48.790696  4165 net.cpp:356] concat -> concat
+I0106 19:56:48.790940  4165 net.cpp:96] Setting up concat
+I0106 19:56:48.790964  4165 net.cpp:103] Top shape: 100 512 9 9 (4147200)
+I0106 19:56:48.790982  4165 net.cpp:67] Creating Layer fc5
+I0106 19:56:48.790992  4165 net.cpp:394] fc5 <- concat
+I0106 19:56:48.791007  4165 net.cpp:356] fc5 -> fc5
+I0106 19:56:48.791023  4165 net.cpp:96] Setting up fc5
+I0106 19:56:48.840823  4165 net.cpp:103] Top shape: 100 128 1 1 (12800)
+I0106 19:56:48.840905  4165 net.cpp:67] Creating Layer relu5
+I0106 19:56:48.840921  4165 net.cpp:394] relu5 <- fc5
+I0106 19:56:48.840937  4165 net.cpp:345] relu5 -> fc5 (in-place)
+I0106 19:56:48.840955  4165 net.cpp:96] Setting up relu5
+I0106 19:56:48.840967  4165 net.cpp:103] Top shape: 100 128 1 1 (12800)
+I0106 19:56:48.840982  4165 net.cpp:67] Creating Layer fc6
+I0106 19:56:48.840992  4165 net.cpp:394] fc6 <- fc5
+I0106 19:56:48.841006  4165 net.cpp:356] fc6 -> fc6
+I0106 19:56:48.841022  4165 net.cpp:96] Setting up fc6
+I0106 19:56:48.841078  4165 net.cpp:103] Top shape: 100 32 1 1 (3200)
+I0106 19:56:48.841097  4165 net.cpp:67] Creating Layer relu6
+I0106 19:56:48.841110  4165 net.cpp:394] relu6 <- fc6
+I0106 19:56:48.841125  4165 net.cpp:345] relu6 -> fc6 (in-place)
+I0106 19:56:48.841137  4165 net.cpp:96] Setting up relu6
+I0106 19:56:48.841150  4165 net.cpp:103] Top shape: 100 32 1 1 (3200)
+I0106 19:56:48.841163  4165 net.cpp:67] Creating Layer fc7
+I0106 19:56:48.841176  4165 net.cpp:394] fc7 <- fc6
+I0106 19:56:48.841188  4165 net.cpp:356] fc7 -> fc7
+I0106 19:56:48.841203  4165 net.cpp:96] Setting up fc7
+I0106 19:56:48.841223  4165 net.cpp:103] Top shape: 100 8 1 1 (800)
+I0106 19:56:48.841239  4165 net.cpp:67] Creating Layer loss
+I0106 19:56:48.841253  4165 net.cpp:394] loss <- fc7
+I0106 19:56:48.841264  4165 net.cpp:394] loss <- label
+I0106 19:56:48.841279  4165 net.cpp:356] loss -> loss
+I0106 19:56:48.841296  4165 net.cpp:96] Setting up loss
+I0106 19:56:48.841320  4165 net.cpp:103] Top shape: 1 1 1 1 (1)
+I0106 19:56:48.841333  4165 net.cpp:109]     with loss weight 1
+I0106 19:56:48.841763  4165 net.cpp:170] loss needs backward computation.
+I0106 19:56:48.841779  4165 net.cpp:170] fc7 needs backward computation.
+I0106 19:56:48.841791  4165 net.cpp:170] relu6 needs backward computation.
+I0106 19:56:48.841804  4165 net.cpp:170] fc6 needs backward computation.
+I0106 19:56:48.841815  4165 net.cpp:170] relu5 needs backward computation.
+I0106 19:56:48.841827  4165 net.cpp:170] fc5 needs backward computation.
+I0106 19:56:48.841838  4165 net.cpp:170] concat needs backward computation.
+I0106 19:56:48.841851  4165 net.cpp:170] relu4_p needs backward computation.
+I0106 19:56:48.841862  4165 net.cpp:170] conv4_p needs backward computation.
+I0106 19:56:48.841874  4165 net.cpp:170] relu3_p needs backward computation.
+I0106 19:56:48.841887  4165 net.cpp:170] conv3_p needs backward computation.
+I0106 19:56:48.841899  4165 net.cpp:170] relu2_p needs backward computation.
+I0106 19:56:48.841910  4165 net.cpp:170] conv2_p needs backward computation.
+I0106 19:56:48.841922  4165 net.cpp:170] relu1_p needs backward computation.
+I0106 19:56:48.841933  4165 net.cpp:170] conv1_p needs backward computation.
+I0106 19:56:48.841945  4165 net.cpp:170] relu4 needs backward computation.
+I0106 19:56:48.841955  4165 net.cpp:170] conv4 needs backward computation.
+I0106 19:56:48.841967  4165 net.cpp:170] relu3 needs backward computation.
+I0106 19:56:48.841980  4165 net.cpp:170] conv3 needs backward computation.
+I0106 19:56:48.841991  4165 net.cpp:170] relu2 needs backward computation.
+I0106 19:56:48.842003  4165 net.cpp:170] conv2 needs backward computation.
+I0106 19:56:48.842015  4165 net.cpp:170] relu1 needs backward computation.
+I0106 19:56:48.842027  4165 net.cpp:170] conv1 needs backward computation.
+I0106 19:56:48.842049  4165 net.cpp:172] slice_pair does not need backward computation.
+I0106 19:56:48.842073  4165 net.cpp:172] data does not need backward computation.
+I0106 19:56:48.842087  4165 net.cpp:208] This network produces output loss
+I0106 19:56:48.842109  4165 net.cpp:467] Collecting Learning Rate and Weight Decay.
+I0106 19:56:48.842126  4165 net.cpp:219] Network initialization done.
+I0106 19:56:48.842139  4165 net.cpp:220] Memory required for data: 342304004
+I0106 19:56:48.842694  4165 solver.cpp:151] Creating test net (#0) specified by net file: cnn_tracker/train_val_affine.prototxt
+I0106 19:56:48.842751  4165 net.cpp:275] The NetState phase (1) differed from the phase (0) specified by a rule in layer data
+I0106 19:56:48.842919  4165 net.cpp:39] Initializing net from parameters: 
+name: "affineRegressionNet"
+layers {
+  top: "data"
+  top: "label"
+  name: "data"
+  type: HDF5_DATA
+  hdf5_data_param {
+    source: "/media/philo/1T_HardDisk/cnn_affine_data/test.txt"
+    batch_size: 100
+  }
+  include {
+    phase: TEST
+  }
+}
+layers {
+  bottom: "data"
+  top: "data1"
+  top: "data2"
+  name: "slice_pair"
+  type: SLICE
+  slice_param {
+    slice_dim: 1
+    slice_point: 3
+  }
+}
+layers {
+  bottom: "data1"
+  top: "conv1"
+  name: "conv1"
+  type: CONVOLUTION
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  convolution_param {
+    num_output: 96
+    kernel_size: 7
+    stride: 2
+    weight_filler {
+      type: "xavier"
+    }
+  }
+  param: "conv1_w"
+  param: "conv1_b"
+}
+layers {
+  bottom: "conv1"
+  top: "conv1"
+  name: "relu1"
+  type: RELU
+}
+layers {
+  bottom: "conv1"
+  top: "conv2"
+  name: "conv2"
+  type: CONVOLUTION
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  convolution_param {
+    num_output: 256
+    kernel_size: 5
+    stride: 2
+    weight_filler {
+      type: "xavier"
+    }
+  }
+  param: "conv2_w"
+  param: "conv2_b"
+}
+layers {
+  bottom: "conv2"
+  top: "conv2"
+  name: "relu2"
+  type: RELU
+}
+layers {
+  bottom: "conv2"
+  top: "conv3"
+  name: "conv3"
+  type: CONVOLUTION
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  convolution_param {
+    num_output: 384
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+  }
+  param: "conv3_w"
+  param: "conv3_b"
+}
+layers {
+  bottom: "conv3"
+  top: "conv3"
+  name: "relu3"
+  type: RELU
+}
+layers {
+  bottom: "conv3"
+  top: "conv4"
+  name: "conv4"
+  type: CONVOLUTION
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  convolution_param {
+    num_output: 256
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+  }
+  param: "conv4_w"
+  param: "conv4_b"
+}
+layers {
+  bottom: "conv4"
+  top: "conv4"
+  name: "relu4"
+  type: RELU
+}
+layers {
+  bottom: "data2"
+  top: "conv1_p"
+  name: "conv1_p"
+  type: CONVOLUTION
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  convolution_param {
+    num_output: 96
+    kernel_size: 7
+    stride: 2
+    weight_filler {
+      type: "xavier"
+    }
+  }
+  param: "conv1_w"
+  param: "conv1_b"
+}
+layers {
+  bottom: "conv1_p"
+  top: "conv1_p"
+  name: "relu1_p"
+  type: RELU
+}
+layers {
+  bottom: "conv1_p"
+  top: "conv2_p"
+  name: "conv2_p"
+  type: CONVOLUTION
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  convolution_param {
+    num_output: 256
+    kernel_size: 5
+    stride: 2
+    weight_filler {
+      type: "xavier"
+    }
+  }
+  param: "conv2_w"
+  param: "conv2_b"
+}
+layers {
+  bottom: "conv2_p"
+  top: "conv2_p"
+  name: "relu2_p"
+  type: RELU
+}
+layers {
+  bottom: "conv2_p"
+  top: "conv3_p"
+  name: "conv3_p"
+  type: CONVOLUTION
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  convolution_param {
+    num_output: 384
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+  }
+  param: "conv3_w"
+  param: "conv3_b"
+}
+layers {
+  bottom: "conv3_p"
+  top: "conv3_p"
+  name: "relu3_p"
+  type: RELU
+}
+layers {
+  bottom: "conv3_p"
+  top: "conv4_p"
+  name: "conv4_p"
+  type: CONVOLUTION
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  convolution_param {
+    num_output: 256
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+  }
+  param: "conv4_w"
+  param: "conv4_b"
+}
+layers {
+  bottom: "conv4_p"
+  top: "conv4_p"
+  name: "relu4_p"
+  type: RELU
+}
+layers {
+  bottom: "conv4"
+  bottom: "conv4_p"
+  top: "concat"
+  name: "concat"
+  type: CONCAT
+  concat_param {
+    concat_dim: 1
+  }
+}
+layers {
+  bottom: "concat"
+  top: "fc5"
+  name: "fc5"
+  type: INNER_PRODUCT
+  inner_product_param {
+    num_output: 128
+    weight_filler {
+      type: "xavier"
+    }
+  }
+}
+layers {
+  bottom: "fc5"
+  top: "fc5"
+  name: "relu5"
+  type: RELU
+}
+layers {
+  bottom: "fc5"
+  top: "fc6"
+  name: "fc6"
+  type: INNER_PRODUCT
+  inner_product_param {
+    num_output: 32
+    weight_filler {
+      type: "xavier"
+    }
+  }
+}
+layers {
+  bottom: "fc6"
+  top: "fc6"
+  name: "relu6"
+  type: RELU
+}
+layers {
+  bottom: "fc6"
+  top: "fc7"
+  name: "fc7"
+  type: INNER_PRODUCT
+  inner_product_param {
+    num_output: 8
+    weight_filler {
+      type: "xavier"
+    }
+  }
+}
+layers {
+  bottom: "fc7"
+  bottom: "label"
+  top: "loss"
+  name: "loss"
+  type: EUCLIDEAN_LOSS
+}
+state {
+  phase: TEST
+}
+I0106 19:56:48.843029  4165 net.cpp:67] Creating Layer data
+I0106 19:56:48.843046  4165 net.cpp:356] data -> data
+I0106 19:56:48.843063  4165 net.cpp:356] data -> label
+I0106 19:56:48.843080  4165 net.cpp:96] Setting up data
+I0106 19:56:48.843092  4165 hdf5_data_layer.cpp:57] Loading filename from /media/philo/1T_HardDisk/cnn_affine_data/test.txt
+I0106 19:56:48.843129  4165 hdf5_data_layer.cpp:69] Number of files: 1
+I0106 19:56:48.843143  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/test_batch_0.h5
+I0106 19:56:50.223702  4165 hdf5_data_layer.cpp:49] Successully loaded 28600 rows
+I0106 19:56:50.223773  4165 hdf5_data_layer.cpp:81] output data size: 100,6,64,64
+I0106 19:56:50.223790  4165 net.cpp:103] Top shape: 100 6 64 64 (2457600)
+I0106 19:56:50.223803  4165 net.cpp:103] Top shape: 100 8 1 1 (800)
+I0106 19:56:50.223824  4165 net.cpp:67] Creating Layer slice_pair
+I0106 19:56:50.223839  4165 net.cpp:394] slice_pair <- data
+I0106 19:56:50.223855  4165 net.cpp:356] slice_pair -> data1
+I0106 19:56:50.223877  4165 net.cpp:356] slice_pair -> data2
+I0106 19:56:50.223894  4165 net.cpp:96] Setting up slice_pair
+I0106 19:56:50.223912  4165 net.cpp:103] Top shape: 100 3 64 64 (1228800)
+I0106 19:56:50.223924  4165 net.cpp:103] Top shape: 100 3 64 64 (1228800)
+I0106 19:56:50.223942  4165 net.cpp:67] Creating Layer conv1
+I0106 19:56:50.223954  4165 net.cpp:394] conv1 <- data1
+I0106 19:56:50.223971  4165 net.cpp:356] conv1 -> conv1
+I0106 19:56:50.223987  4165 net.cpp:96] Setting up conv1
+I0106 19:56:50.224130  4165 net.cpp:103] Top shape: 100 96 29 29 (8073600)
+I0106 19:56:50.224151  4165 net.cpp:67] Creating Layer relu1
+I0106 19:56:50.224166  4165 net.cpp:394] relu1 <- conv1
+I0106 19:56:50.224181  4165 net.cpp:345] relu1 -> conv1 (in-place)
+I0106 19:56:50.224195  4165 net.cpp:96] Setting up relu1
+I0106 19:56:50.224208  4165 net.cpp:103] Top shape: 100 96 29 29 (8073600)
+I0106 19:56:50.224225  4165 net.cpp:67] Creating Layer conv2
+I0106 19:56:50.224238  4165 net.cpp:394] conv2 <- conv1
+I0106 19:56:50.224252  4165 net.cpp:356] conv2 -> conv2
+I0106 19:56:50.224269  4165 net.cpp:96] Setting up conv2
+I0106 19:56:50.229532  4165 net.cpp:103] Top shape: 100 256 13 13 (4326400)
+I0106 19:56:50.229560  4165 net.cpp:67] Creating Layer relu2
+I0106 19:56:50.229574  4165 net.cpp:394] relu2 <- conv2
+I0106 19:56:50.229588  4165 net.cpp:345] relu2 -> conv2 (in-place)
+I0106 19:56:50.229603  4165 net.cpp:96] Setting up relu2
+I0106 19:56:50.229614  4165 net.cpp:103] Top shape: 100 256 13 13 (4326400)
+I0106 19:56:50.229629  4165 net.cpp:67] Creating Layer conv3
+I0106 19:56:50.229643  4165 net.cpp:394] conv3 <- conv2
+I0106 19:56:50.229657  4165 net.cpp:356] conv3 -> conv3
+I0106 19:56:50.229672  4165 net.cpp:96] Setting up conv3
+I0106 19:56:50.238157  4165 net.cpp:103] Top shape: 100 384 11 11 (4646400)
+I0106 19:56:50.238196  4165 net.cpp:67] Creating Layer relu3
+I0106 19:56:50.238209  4165 net.cpp:394] relu3 <- conv3
+I0106 19:56:50.238240  4165 net.cpp:345] relu3 -> conv3 (in-place)
+I0106 19:56:50.238270  4165 net.cpp:96] Setting up relu3
+I0106 19:56:50.238282  4165 net.cpp:103] Top shape: 100 384 11 11 (4646400)
+I0106 19:56:50.238299  4165 net.cpp:67] Creating Layer conv4
+I0106 19:56:50.238312  4165 net.cpp:394] conv4 <- conv3
+I0106 19:56:50.238325  4165 net.cpp:356] conv4 -> conv4
+I0106 19:56:50.238343  4165 net.cpp:96] Setting up conv4
+I0106 19:56:50.247282  4165 net.cpp:103] Top shape: 100 256 9 9 (2073600)
+I0106 19:56:50.247313  4165 net.cpp:67] Creating Layer relu4
+I0106 19:56:50.247326  4165 net.cpp:394] relu4 <- conv4
+I0106 19:56:50.247340  4165 net.cpp:345] relu4 -> conv4 (in-place)
+I0106 19:56:50.247354  4165 net.cpp:96] Setting up relu4
+I0106 19:56:50.247364  4165 net.cpp:103] Top shape: 100 256 9 9 (2073600)
+I0106 19:56:50.247381  4165 net.cpp:67] Creating Layer conv1_p
+I0106 19:56:50.247392  4165 net.cpp:394] conv1_p <- data2
+I0106 19:56:50.247406  4165 net.cpp:356] conv1_p -> conv1_p
+I0106 19:56:50.247421  4165 net.cpp:96] Setting up conv1_p
+I0106 19:56:50.247560  4165 net.cpp:103] Top shape: 100 96 29 29 (8073600)
+I0106 19:56:50.247578  4165 net.cpp:436] Sharing parameters 'conv1_w' owned by layer 'conv1', param index 0
+I0106 19:56:50.247593  4165 net.cpp:436] Sharing parameters 'conv1_b' owned by layer 'conv1', param index 1
+I0106 19:56:50.247606  4165 net.cpp:67] Creating Layer relu1_p
+I0106 19:56:50.247619  4165 net.cpp:394] relu1_p <- conv1_p
+I0106 19:56:50.247632  4165 net.cpp:345] relu1_p -> conv1_p (in-place)
+I0106 19:56:50.247647  4165 net.cpp:96] Setting up relu1_p
+I0106 19:56:50.247660  4165 net.cpp:103] Top shape: 100 96 29 29 (8073600)
+I0106 19:56:50.247674  4165 net.cpp:67] Creating Layer conv2_p
+I0106 19:56:50.247687  4165 net.cpp:394] conv2_p <- conv1_p
+I0106 19:56:50.247700  4165 net.cpp:356] conv2_p -> conv2_p
+I0106 19:56:50.247715  4165 net.cpp:96] Setting up conv2_p
+I0106 19:56:50.253463  4165 net.cpp:103] Top shape: 100 256 13 13 (4326400)
+I0106 19:56:50.253486  4165 net.cpp:436] Sharing parameters 'conv2_w' owned by layer 'conv2', param index 0
+I0106 19:56:50.253499  4165 net.cpp:436] Sharing parameters 'conv2_b' owned by layer 'conv2', param index 1
+I0106 19:56:50.253512  4165 net.cpp:67] Creating Layer relu2_p
+I0106 19:56:50.253525  4165 net.cpp:394] relu2_p <- conv2_p
+I0106 19:56:50.253536  4165 net.cpp:345] relu2_p -> conv2_p (in-place)
+I0106 19:56:50.253552  4165 net.cpp:96] Setting up relu2_p
+I0106 19:56:50.253563  4165 net.cpp:103] Top shape: 100 256 13 13 (4326400)
+I0106 19:56:50.253577  4165 net.cpp:67] Creating Layer conv3_p
+I0106 19:56:50.253588  4165 net.cpp:394] conv3_p <- conv2_p
+I0106 19:56:50.253602  4165 net.cpp:356] conv3_p -> conv3_p
+I0106 19:56:50.253617  4165 net.cpp:96] Setting up conv3_p
+I0106 19:56:50.261101  4165 net.cpp:103] Top shape: 100 384 11 11 (4646400)
+I0106 19:56:50.261123  4165 net.cpp:436] Sharing parameters 'conv3_w' owned by layer 'conv3', param index 0
+I0106 19:56:50.261135  4165 net.cpp:436] Sharing parameters 'conv3_b' owned by layer 'conv3', param index 1
+I0106 19:56:50.261148  4165 net.cpp:67] Creating Layer relu3_p
+I0106 19:56:50.261159  4165 net.cpp:394] relu3_p <- conv3_p
+I0106 19:56:50.261173  4165 net.cpp:345] relu3_p -> conv3_p (in-place)
+I0106 19:56:50.261186  4165 net.cpp:96] Setting up relu3_p
+I0106 19:56:50.261198  4165 net.cpp:103] Top shape: 100 384 11 11 (4646400)
+I0106 19:56:50.261214  4165 net.cpp:67] Creating Layer conv4_p
+I0106 19:56:50.261225  4165 net.cpp:394] conv4_p <- conv3_p
+I0106 19:56:50.261237  4165 net.cpp:356] conv4_p -> conv4_p
+I0106 19:56:50.261253  4165 net.cpp:96] Setting up conv4_p
+I0106 19:56:50.268398  4165 net.cpp:103] Top shape: 100 256 9 9 (2073600)
+I0106 19:56:50.268419  4165 net.cpp:436] Sharing parameters 'conv4_w' owned by layer 'conv4', param index 0
+I0106 19:56:50.268430  4165 net.cpp:436] Sharing parameters 'conv4_b' owned by layer 'conv4', param index 1
+I0106 19:56:50.268443  4165 net.cpp:67] Creating Layer relu4_p
+I0106 19:56:50.268455  4165 net.cpp:394] relu4_p <- conv4_p
+I0106 19:56:50.268467  4165 net.cpp:345] relu4_p -> conv4_p (in-place)
+I0106 19:56:50.268491  4165 net.cpp:96] Setting up relu4_p
+I0106 19:56:50.268513  4165 net.cpp:103] Top shape: 100 256 9 9 (2073600)
+I0106 19:56:50.268540  4165 net.cpp:67] Creating Layer concat
+I0106 19:56:50.268555  4165 net.cpp:394] concat <- conv4
+I0106 19:56:50.268568  4165 net.cpp:394] concat <- conv4_p
+I0106 19:56:50.268582  4165 net.cpp:356] concat -> concat
+I0106 19:56:50.268599  4165 net.cpp:96] Setting up concat
+I0106 19:56:50.268611  4165 net.cpp:103] Top shape: 100 512 9 9 (4147200)
+I0106 19:56:50.268625  4165 net.cpp:67] Creating Layer fc5
+I0106 19:56:50.268637  4165 net.cpp:394] fc5 <- concat
+I0106 19:56:50.268651  4165 net.cpp:356] fc5 -> fc5
+I0106 19:56:50.268666  4165 net.cpp:96] Setting up fc5
+I0106 19:56:50.319119  4165 net.cpp:103] Top shape: 100 128 1 1 (12800)
+I0106 19:56:50.319195  4165 net.cpp:67] Creating Layer relu5
+I0106 19:56:50.319208  4165 net.cpp:394] relu5 <- fc5
+I0106 19:56:50.319224  4165 net.cpp:345] relu5 -> fc5 (in-place)
+I0106 19:56:50.319239  4165 net.cpp:96] Setting up relu5
+I0106 19:56:50.319253  4165 net.cpp:103] Top shape: 100 128 1 1 (12800)
+I0106 19:56:50.319267  4165 net.cpp:67] Creating Layer fc6
+I0106 19:56:50.319278  4165 net.cpp:394] fc6 <- fc5
+I0106 19:56:50.319290  4165 net.cpp:356] fc6 -> fc6
+I0106 19:56:50.319305  4165 net.cpp:96] Setting up fc6
+I0106 19:56:50.319360  4165 net.cpp:103] Top shape: 100 32 1 1 (3200)
+I0106 19:56:50.319377  4165 net.cpp:67] Creating Layer relu6
+I0106 19:56:50.319391  4165 net.cpp:394] relu6 <- fc6
+I0106 19:56:50.319404  4165 net.cpp:345] relu6 -> fc6 (in-place)
+I0106 19:56:50.319417  4165 net.cpp:96] Setting up relu6
+I0106 19:56:50.319432  4165 net.cpp:103] Top shape: 100 32 1 1 (3200)
+I0106 19:56:50.319444  4165 net.cpp:67] Creating Layer fc7
+I0106 19:56:50.319457  4165 net.cpp:394] fc7 <- fc6
+I0106 19:56:50.319469  4165 net.cpp:356] fc7 -> fc7
+I0106 19:56:50.319484  4165 net.cpp:96] Setting up fc7
+I0106 19:56:50.319502  4165 net.cpp:103] Top shape: 100 8 1 1 (800)
+I0106 19:56:50.319520  4165 net.cpp:67] Creating Layer loss
+I0106 19:56:50.319533  4165 net.cpp:394] loss <- fc7
+I0106 19:56:50.319545  4165 net.cpp:394] loss <- label
+I0106 19:56:50.319560  4165 net.cpp:356] loss -> loss
+I0106 19:56:50.319576  4165 net.cpp:96] Setting up loss
+I0106 19:56:50.319591  4165 net.cpp:103] Top shape: 1 1 1 1 (1)
+I0106 19:56:50.319605  4165 net.cpp:109]     with loss weight 1
+I0106 19:56:50.319628  4165 net.cpp:170] loss needs backward computation.
+I0106 19:56:50.319643  4165 net.cpp:170] fc7 needs backward computation.
+I0106 19:56:50.319654  4165 net.cpp:170] relu6 needs backward computation.
+I0106 19:56:50.319664  4165 net.cpp:170] fc6 needs backward computation.
+I0106 19:56:50.319677  4165 net.cpp:170] relu5 needs backward computation.
+I0106 19:56:50.319687  4165 net.cpp:170] fc5 needs backward computation.
+I0106 19:56:50.319700  4165 net.cpp:170] concat needs backward computation.
+I0106 19:56:50.319711  4165 net.cpp:170] relu4_p needs backward computation.
+I0106 19:56:50.319725  4165 net.cpp:170] conv4_p needs backward computation.
+I0106 19:56:50.319736  4165 net.cpp:170] relu3_p needs backward computation.
+I0106 19:56:50.319748  4165 net.cpp:170] conv3_p needs backward computation.
+I0106 19:56:50.319761  4165 net.cpp:170] relu2_p needs backward computation.
+I0106 19:56:50.319772  4165 net.cpp:170] conv2_p needs backward computation.
+I0106 19:56:50.319783  4165 net.cpp:170] relu1_p needs backward computation.
+I0106 19:56:50.319797  4165 net.cpp:170] conv1_p needs backward computation.
+I0106 19:56:50.319809  4165 net.cpp:170] relu4 needs backward computation.
+I0106 19:56:50.319820  4165 net.cpp:170] conv4 needs backward computation.
+I0106 19:56:50.319833  4165 net.cpp:170] relu3 needs backward computation.
+I0106 19:56:50.319843  4165 net.cpp:170] conv3 needs backward computation.
+I0106 19:56:50.319855  4165 net.cpp:170] relu2 needs backward computation.
+I0106 19:56:50.319869  4165 net.cpp:170] conv2 needs backward computation.
+I0106 19:56:50.319880  4165 net.cpp:170] relu1 needs backward computation.
+I0106 19:56:50.319905  4165 net.cpp:170] conv1 needs backward computation.
+I0106 19:56:50.319929  4165 net.cpp:172] slice_pair does not need backward computation.
+I0106 19:56:50.319943  4165 net.cpp:172] data does not need backward computation.
+I0106 19:56:50.319957  4165 net.cpp:208] This network produces output loss
+I0106 19:56:50.319978  4165 net.cpp:467] Collecting Learning Rate and Weight Decay.
+I0106 19:56:50.319994  4165 net.cpp:219] Network initialization done.
+I0106 19:56:50.320006  4165 net.cpp:220] Memory required for data: 342304004
+I0106 19:56:50.320097  4165 solver.cpp:41] Solver scaffolding done.
+I0106 19:56:50.320116  4165 solver.cpp:160] Solving affineRegressionNet
+I0106 19:56:50.320159  4165 solver.cpp:247] Iteration 0, Testing net (#0)
+I0106 20:05:42.333735  4165 solver.cpp:298]     Test net output #0: loss = 373.892 (* 1 = 373.892 loss)
+I0106 20:05:43.990882  4165 solver.cpp:191] Iteration 0, loss = 391.047
+I0106 20:05:43.990948  4165 solver.cpp:206]     Train net output #0: loss = 391.047 (* 1 = 391.047 loss)
+I0106 20:05:43.990974  4165 solver.cpp:403] Iteration 0, lr = 0.0001
+I0106 20:20:54.252048  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_1.h5
+I0106 20:21:17.696358  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0106 20:36:29.687204  4165 solver.cpp:247] Iteration 1000, Testing net (#0)
+I0106 20:45:20.910917  4165 solver.cpp:298]     Test net output #0: loss = 183.131 (* 1 = 183.131 loss)
+I0106 20:45:20.910997  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_2.h5
+I0106 20:45:44.406379  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0106 20:45:46.054407  4165 solver.cpp:191] Iteration 1000, loss = 152.389
+I0106 20:45:46.054476  4165 solver.cpp:206]     Train net output #0: loss = 152.389 (* 1 = 152.389 loss)
+I0106 20:45:46.054497  4165 solver.cpp:403] Iteration 1000, lr = 0.0001
+I0106 21:00:56.394366  4165 hdf5_data_layer.cu:33] looping around to first file
+I0106 21:00:56.394436  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_0.h5
+I0106 21:01:17.042172  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0106 21:16:28.836479  4165 solver.cpp:247] Iteration 2000, Testing net (#0)
+I0106 21:25:20.192735  4165 solver.cpp:298]     Test net output #0: loss = 92.7982 (* 1 = 92.7982 loss)
+I0106 21:25:20.192858  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_1.h5
+I0106 21:25:43.572736  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0106 21:25:45.219986  4165 solver.cpp:191] Iteration 2000, loss = 87.8633
+I0106 21:25:45.220049  4165 solver.cpp:206]     Train net output #0: loss = 87.8633 (* 1 = 87.8633 loss)
+I0106 21:25:45.220069  4165 solver.cpp:403] Iteration 2000, lr = 0.0001
+I0106 21:40:55.293892  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_2.h5
+I0106 21:41:18.686280  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0106 21:56:30.797255  4165 solver.cpp:247] Iteration 3000, Testing net (#0)
+I0106 22:05:22.110175  4165 solver.cpp:298]     Test net output #0: loss = 76.7453 (* 1 = 76.7453 loss)
+I0106 22:05:22.110301  4165 hdf5_data_layer.cu:33] looping around to first file
+I0106 22:05:22.110317  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_0.h5
+I0106 22:05:42.726766  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0106 22:05:44.374379  4165 solver.cpp:191] Iteration 3000, loss = 69.5969
+I0106 22:05:44.374443  4165 solver.cpp:206]     Train net output #0: loss = 69.5969 (* 1 = 69.5969 loss)
+I0106 22:05:44.374462  4165 solver.cpp:403] Iteration 3000, lr = 0.0001
+I0106 22:20:54.615161  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_1.h5
+I0106 22:21:02.018141  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0106 22:36:13.825604  4165 solver.cpp:247] Iteration 4000, Testing net (#0)
+I0106 22:45:05.088126  4165 solver.cpp:298]     Test net output #0: loss = 74.5315 (* 1 = 74.5315 loss)
+I0106 22:45:05.088207  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_2.h5
+I0106 22:45:06.264253  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0106 22:45:07.913008  4165 solver.cpp:191] Iteration 4000, loss = 52.1064
+I0106 22:45:07.913070  4165 solver.cpp:206]     Train net output #0: loss = 52.1064 (* 1 = 52.1064 loss)
+I0106 22:45:07.913090  4165 solver.cpp:403] Iteration 4000, lr = 0.0001
+I0106 23:00:17.827015  4165 hdf5_data_layer.cu:33] looping around to first file
+I0106 23:00:17.827083  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_0.h5
+I0106 23:00:18.795534  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0106 23:15:30.367377  4165 solver.cpp:247] Iteration 5000, Testing net (#0)
+I0106 23:24:21.679671  4165 solver.cpp:298]     Test net output #0: loss = 72.8909 (* 1 = 72.8909 loss)
+I0106 23:24:21.679788  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_1.h5
+I0106 23:24:22.688395  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0106 23:24:24.337141  4165 solver.cpp:191] Iteration 5000, loss = 65.2749
+I0106 23:24:24.337203  4165 solver.cpp:206]     Train net output #0: loss = 65.2749 (* 1 = 65.2749 loss)
+I0106 23:24:24.337223  4165 solver.cpp:403] Iteration 5000, lr = 1e-05
+I0106 23:39:34.705382  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_2.h5
+I0106 23:39:35.574168  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0106 23:54:47.406571  4165 solver.cpp:247] Iteration 6000, Testing net (#0)
+I0107 00:03:38.771950  4165 solver.cpp:298]     Test net output #0: loss = 65.6112 (* 1 = 65.6112 loss)
+I0107 00:03:38.772023  4165 hdf5_data_layer.cu:33] looping around to first file
+I0107 00:03:38.772038  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_0.h5
+I0107 00:03:39.640880  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0107 00:03:41.289274  4165 solver.cpp:191] Iteration 6000, loss = 50.9454
+I0107 00:03:41.289335  4165 solver.cpp:206]     Train net output #0: loss = 50.9454 (* 1 = 50.9454 loss)
+I0107 00:03:41.289355  4165 solver.cpp:403] Iteration 6000, lr = 1e-05
+I0107 00:18:51.386801  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_1.h5
+I0107 00:18:52.364764  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0107 00:34:04.230581  4165 solver.cpp:247] Iteration 7000, Testing net (#0)
+I0107 00:42:55.462337  4165 solver.cpp:298]     Test net output #0: loss = 64.8288 (* 1 = 64.8288 loss)
+I0107 00:42:55.462460  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_2.h5
+I0107 00:42:56.323477  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0107 00:42:57.971046  4165 solver.cpp:191] Iteration 7000, loss = 43.2136
+I0107 00:42:57.971108  4165 solver.cpp:206]     Train net output #0: loss = 43.2136 (* 1 = 43.2136 loss)
+I0107 00:42:57.971127  4165 solver.cpp:403] Iteration 7000, lr = 1e-05
+I0107 00:58:08.483461  4165 hdf5_data_layer.cu:33] looping around to first file
+I0107 00:58:08.483536  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_0.h5
+I0107 00:58:09.345582  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0107 01:13:21.053211  4165 solver.cpp:247] Iteration 8000, Testing net (#0)
+I0107 01:22:12.117153  4165 solver.cpp:298]     Test net output #0: loss = 65.1333 (* 1 = 65.1333 loss)
+I0107 01:22:12.117276  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_1.h5
+I0107 01:22:12.980887  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0107 01:22:14.637691  4165 solver.cpp:191] Iteration 8000, loss = 58.1741
+I0107 01:22:14.637750  4165 solver.cpp:206]     Train net output #0: loss = 58.1741 (* 1 = 58.1741 loss)
+I0107 01:22:14.637786  4165 solver.cpp:403] Iteration 8000, lr = 1e-05
+I0107 01:37:24.744910  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_2.h5
+I0107 01:37:25.606111  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0107 01:52:37.261729  4165 solver.cpp:247] Iteration 9000, Testing net (#0)
+I0107 02:01:28.442239  4165 solver.cpp:298]     Test net output #0: loss = 64.5505 (* 1 = 64.5505 loss)
+I0107 02:01:28.442315  4165 hdf5_data_layer.cu:33] looping around to first file
+I0107 02:01:28.442329  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_0.h5
+I0107 02:01:29.304616  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0107 02:01:30.952558  4165 solver.cpp:191] Iteration 9000, loss = 48.2067
+I0107 02:01:30.952620  4165 solver.cpp:206]     Train net output #0: loss = 48.2067 (* 1 = 48.2067 loss)
+I0107 02:01:30.952638  4165 solver.cpp:403] Iteration 9000, lr = 1e-05
+I0107 02:16:40.930326  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_1.h5
+I0107 02:16:41.794008  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0107 02:31:53.920073  4165 solver.cpp:317] Snapshotting to cnn_tracker/affine_iter_10000.caffemodel
+I0107 02:31:54.084003  4165 solver.cpp:324] Snapshotting solver state to cnn_tracker/affine_iter_10000.solverstate
+I0107 02:31:54.166833  4165 solver.cpp:247] Iteration 10000, Testing net (#0)
+I0107 02:40:45.031325  4165 solver.cpp:298]     Test net output #0: loss = 64.617 (* 1 = 64.617 loss)
+I0107 02:40:45.031442  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_2.h5
+I0107 02:40:45.898862  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0107 02:40:47.545842  4165 solver.cpp:191] Iteration 10000, loss = 42.5095
+I0107 02:40:47.545904  4165 solver.cpp:206]     Train net output #0: loss = 42.5095 (* 1 = 42.5095 loss)
+I0107 02:40:47.545923  4165 solver.cpp:403] Iteration 10000, lr = 1e-06
+I0107 02:55:57.639744  4165 hdf5_data_layer.cu:33] looping around to first file
+I0107 02:55:57.639863  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_0.h5
+I0107 02:55:58.508307  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0107 03:11:10.304801  4165 solver.cpp:247] Iteration 11000, Testing net (#0)
+I0107 03:20:01.291278  4165 solver.cpp:298]     Test net output #0: loss = 64.1851 (* 1 = 64.1851 loss)
+I0107 03:20:01.291402  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_1.h5
+I0107 03:20:02.161268  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0107 03:20:03.808784  4165 solver.cpp:191] Iteration 11000, loss = 56.4445
+I0107 03:20:03.808847  4165 solver.cpp:206]     Train net output #0: loss = 56.4445 (* 1 = 56.4445 loss)
+I0107 03:20:03.808866  4165 solver.cpp:403] Iteration 11000, lr = 1e-06
+I0107 03:35:14.037935  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_2.h5
+I0107 03:35:14.905267  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0107 03:50:26.925246  4165 solver.cpp:247] Iteration 12000, Testing net (#0)
+I0107 03:59:18.210010  4165 solver.cpp:298]     Test net output #0: loss = 64.4423 (* 1 = 64.4423 loss)
+I0107 03:59:18.210130  4165 hdf5_data_layer.cu:33] looping around to first file
+I0107 03:59:18.210147  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_0.h5
+I0107 03:59:19.078517  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0107 03:59:20.726176  4165 solver.cpp:191] Iteration 12000, loss = 47.8301
+I0107 03:59:20.726233  4165 solver.cpp:206]     Train net output #0: loss = 47.8301 (* 1 = 47.8301 loss)
+I0107 03:59:20.726253  4165 solver.cpp:403] Iteration 12000, lr = 1e-06
+I0107 04:14:30.876387  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_1.h5
+I0107 04:14:31.746384  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0107 04:29:43.575227  4165 solver.cpp:247] Iteration 13000, Testing net (#0)
+I0107 04:38:34.656395  4165 solver.cpp:298]     Test net output #0: loss = 64.2214 (* 1 = 64.2214 loss)
+I0107 04:38:34.656512  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_2.h5
+I0107 04:38:35.523915  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0107 04:38:37.171171  4165 solver.cpp:191] Iteration 13000, loss = 42.3563
+I0107 04:38:37.171232  4165 solver.cpp:206]     Train net output #0: loss = 42.3563 (* 1 = 42.3563 loss)
+I0107 04:38:37.171252  4165 solver.cpp:403] Iteration 13000, lr = 1e-06
+I0107 04:53:47.109318  4165 hdf5_data_layer.cu:33] looping around to first file
+I0107 04:53:47.109421  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_0.h5
+I0107 04:53:47.977903  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0107 05:08:59.771639  4165 solver.cpp:247] Iteration 14000, Testing net (#0)
+I0107 05:17:50.729307  4165 solver.cpp:298]     Test net output #0: loss = 64.4946 (* 1 = 64.4946 loss)
+I0107 05:17:50.729384  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_1.h5
+I0107 05:17:51.599303  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0107 05:17:53.247256  4165 solver.cpp:191] Iteration 14000, loss = 56.0676
+I0107 05:17:53.247315  4165 solver.cpp:206]     Train net output #0: loss = 56.0676 (* 1 = 56.0676 loss)
+I0107 05:17:53.247334  4165 solver.cpp:403] Iteration 14000, lr = 1e-06
+I0107 05:33:03.800884  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_2.h5
+I0107 05:33:04.668527  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0107 05:48:16.554795  4165 solver.cpp:247] Iteration 15000, Testing net (#0)
+I0107 05:57:07.808683  4165 solver.cpp:298]     Test net output #0: loss = 64.1422 (* 1 = 64.1422 loss)
+I0107 05:57:07.808759  4165 hdf5_data_layer.cu:33] looping around to first file
+I0107 05:57:07.808774  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_0.h5
+I0107 05:57:08.677196  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0107 05:57:10.325040  4165 solver.cpp:191] Iteration 15000, loss = 47.5281
+I0107 05:57:10.325104  4165 solver.cpp:206]     Train net output #0: loss = 47.5281 (* 1 = 47.5281 loss)
+I0107 05:57:10.325131  4165 solver.cpp:403] Iteration 15000, lr = 1e-07
+I0107 06:12:20.463361  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_1.h5
+I0107 06:12:21.333276  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0107 06:27:33.033211  4165 solver.cpp:247] Iteration 16000, Testing net (#0)
+I0107 06:36:24.230103  4165 solver.cpp:298]     Test net output #0: loss = 64.4725 (* 1 = 64.4725 loss)
+I0107 06:36:24.230218  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_2.h5
+I0107 06:36:25.097772  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0107 06:36:26.745328  4165 solver.cpp:191] Iteration 16000, loss = 42.4014
+I0107 06:36:26.745388  4165 solver.cpp:206]     Train net output #0: loss = 42.4014 (* 1 = 42.4014 loss)
+I0107 06:36:26.745409  4165 solver.cpp:403] Iteration 16000, lr = 1e-07
+I0107 06:51:37.036454  4165 hdf5_data_layer.cu:33] looping around to first file
+I0107 06:51:37.036525  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_0.h5
+I0107 06:51:37.905148  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0107 07:06:49.655866  4165 solver.cpp:247] Iteration 17000, Testing net (#0)
+I0107 07:15:40.921993  4165 solver.cpp:298]     Test net output #0: loss = 64.1478 (* 1 = 64.1478 loss)
+I0107 07:15:40.922155  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_1.h5
+I0107 07:15:41.792206  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0107 07:15:43.440209  4165 solver.cpp:191] Iteration 17000, loss = 56.049
+I0107 07:15:43.440273  4165 solver.cpp:206]     Train net output #0: loss = 56.049 (* 1 = 56.049 loss)
+I0107 07:15:43.440291  4165 solver.cpp:403] Iteration 17000, lr = 1e-07
+I0107 07:30:53.619837  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_2.h5
+I0107 07:30:54.487550  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0107 07:46:06.595433  4165 solver.cpp:247] Iteration 18000, Testing net (#0)
+I0107 07:54:57.810667  4165 solver.cpp:298]     Test net output #0: loss = 64.4687 (* 1 = 64.4687 loss)
+I0107 07:54:57.810744  4165 hdf5_data_layer.cu:33] looping around to first file
+I0107 07:54:57.810758  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_0.h5
+I0107 07:54:58.679313  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0107 07:55:00.333489  4165 solver.cpp:191] Iteration 18000, loss = 47.5442
+I0107 07:55:00.333556  4165 solver.cpp:206]     Train net output #0: loss = 47.5442 (* 1 = 47.5442 loss)
+I0107 07:55:00.333576  4165 solver.cpp:403] Iteration 18000, lr = 1e-07
+I0107 08:10:10.113358  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_1.h5
+I0107 08:10:10.983486  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0107 08:25:22.437019  4165 solver.cpp:247] Iteration 19000, Testing net (#0)
+I0107 08:34:13.655432  4165 solver.cpp:298]     Test net output #0: loss = 64.1681 (* 1 = 64.1681 loss)
+I0107 08:34:13.655509  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_2.h5
+I0107 08:34:14.523368  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0107 08:34:16.171327  4165 solver.cpp:191] Iteration 19000, loss = 42.3278
+I0107 08:34:16.171389  4165 solver.cpp:206]     Train net output #0: loss = 42.3278 (* 1 = 42.3278 loss)
+I0107 08:34:16.171409  4165 solver.cpp:403] Iteration 19000, lr = 1e-07
+I0107 08:49:26.218567  4165 hdf5_data_layer.cu:33] looping around to first file
+I0107 08:49:26.218678  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_0.h5
+I0107 08:49:27.087312  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0107 09:04:38.987905  4165 solver.cpp:317] Snapshotting to cnn_tracker/affine_iter_20000.caffemodel
+I0107 09:04:39.188663  4165 solver.cpp:324] Snapshotting solver state to cnn_tracker/affine_iter_20000.solverstate
+I0107 09:04:39.274809  4165 solver.cpp:247] Iteration 20000, Testing net (#0)
+I0107 09:13:31.123162  4165 solver.cpp:298]     Test net output #0: loss = 64.4562 (* 1 = 64.4562 loss)
+I0107 09:13:31.123296  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_1.h5
+I0107 09:13:31.987098  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0107 09:13:33.642827  4165 solver.cpp:191] Iteration 20000, loss = 55.9691
+I0107 09:13:33.642891  4165 solver.cpp:206]     Train net output #0: loss = 55.9691 (* 1 = 55.9691 loss)
+I0107 09:13:33.642915  4165 solver.cpp:403] Iteration 20000, lr = 1e-08
+I0107 09:28:43.782310  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_2.h5
+I0107 09:28:44.643874  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0107 09:43:56.303737  4165 solver.cpp:247] Iteration 21000, Testing net (#0)
+I0107 09:52:47.340378  4165 solver.cpp:298]     Test net output #0: loss = 64.1774 (* 1 = 64.1774 loss)
+I0107 09:52:47.340495  4165 hdf5_data_layer.cu:33] looping around to first file
+I0107 09:52:47.340510  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_0.h5
+I0107 09:52:48.203763  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0107 09:52:49.851922  4165 solver.cpp:191] Iteration 21000, loss = 47.5096
+I0107 09:52:49.851984  4165 solver.cpp:206]     Train net output #0: loss = 47.5096 (* 1 = 47.5096 loss)
+I0107 09:52:49.852020  4165 solver.cpp:403] Iteration 21000, lr = 1e-08
+I0107 10:07:59.982785  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_1.h5
+I0107 10:08:00.846758  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0107 10:23:12.317672  4165 solver.cpp:247] Iteration 22000, Testing net (#0)
+I0107 10:32:04.087663  4165 solver.cpp:298]     Test net output #0: loss = 64.4386 (* 1 = 64.4386 loss)
+I0107 10:32:04.087738  4165 hdf5_data_layer.cpp:29] Loading HDF5 file/media/philo/1T_HardDisk/cnn_affine_data/train_batch_2.h5
+I0107 10:32:04.953120  4165 hdf5_data_layer.cpp:49] Successully loaded 50000 rows
+I0107 10:32:06.604053  4165 solver.cpp:191] Iteration 22000, loss = 42.305
+I0107 10:32:06.604115  4165 solver.cpp:206]     Train net output #0: loss = 42.305 (* 1 = 42.305 loss)
+I0107 10:32:06.604136  4165 solver.cpp:403] Iteration 22000, lr = 1e-08

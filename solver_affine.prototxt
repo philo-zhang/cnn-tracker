@@ -1,0 +1,14 @@
+net: "cnn_tracker/train_val_affine.prototxt"
+test_iter: 1000
+test_interval: 1000
+base_lr: 0.0001
+lr_policy: "step"
+gamma: 0.1
+stepsize: 5000
+display: 1000
+max_iter: 30000
+momentum: 0.95
+weight_decay: 0.0001
+snapshot: 10000
+snapshot_prefix: "cnn_tracker/affine"
+solver_mode: GPU
