@@ -9,9 +9,9 @@ dataPath = '/media/philo/1T_HardDisk/cnn_affine_data'
 imgPath1 = dataPath + '/data1'
 imgPath2 = dataPath + '/data2'
 imgNum = len(os.listdir(imgPath1))
-batchSize = 50000
+batchSize = 60000
 batchNum = int(math.ceil(imgNum*1.0/batchSize))
-trainBatchNum = batchNum*3/4
+trainBatchNum = batchNum*5/6
 testBatchNum = batchNum-trainBatchNum
 print batchNum, trainBatchNum, testBatchNum
 randTrain = np.array(range(0, trainBatchNum*batchSize))

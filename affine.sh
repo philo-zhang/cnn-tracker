@@ -3,4 +3,4 @@
 TOOLS=./build/tools
 
 nohup $TOOLS/caffe train \
-		--solver=cnn_tracker/solver_affine.prototxt > cnn_tracker/log &
+		--solver=cnn-tracker/solver_affine.prototxt > cnn-tracker/log &

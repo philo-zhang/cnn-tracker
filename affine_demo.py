@@ -18,13 +18,18 @@ labelSize = 8
 
 dataSet = '/media/philo/1T_HardDisk/dataset'
 dataPath = '/media/philo/1T_HardDisk/cnn_affine_data'
-seqName = 'Doll'
-start = 575
-end = 580
+seqName = 'Tiger2'
+start = 43
+end =  48
 sequence = os.path.join(dataSet, seqName)
 rin = open(sequence + '/groundtruth_rect.txt', 'r')
 rect = np.zeros((4), dtype='float')
 ratio = np.zeros((batchSize,2), dtype='float')
+
+if not os.path.exists(dataPath + "/testData/imgs"):
+    os.makedirs(dataPath + "/testData/data1")
+    os.makedirs(dataPath + "/testData/data2")
+    os.makedirs(dataPath + "/testData/imgs")
 
 def pose_estimation(P1, P2):
     transM = np.zeros((P1.shape[0], 2, 3), dtype = float)

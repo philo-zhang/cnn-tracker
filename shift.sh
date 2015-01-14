@@ -3,4 +3,4 @@
 TOOLS=./build/tools
 
 $TOOLS/caffe train \
-		--solver=cnn_tracker/solver.prototxt
+		--solver=cnn-tracker/solver.prototxt
