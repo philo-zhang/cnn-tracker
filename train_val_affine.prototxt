@@ -137,6 +137,26 @@ layers {
     top: "conv4"
 }
 layers {
+    name: "fc5"
+    type: INNER_PRODUCT
+    bottom: "conv4"
+    top: "fc5"
+    inner_product_param {
+        num_output: 1024
+        weight_filler {
+            type: "xavier"
+        }
+    }
+    param: "fc5_w"
+    param: "fc5_b"
+}
+layers {
+    name: "relu5"
+    type: RELU
+    bottom: "fc5"
+    top: "fc5"
+}
+layers {
 	name: "conv1_p"
 	type: CONVOLUTION
 	bottom: "data2"
@@ -242,9 +262,29 @@ layers {
     top: "conv4_p"
 }
 layers {
+    name: "fc5_p"
+    type: INNER_PRODUCT
+    bottom: "conv4_p"
+    top: "fc5_p"
+    inner_product_param {
+        num_output: 1024
+        weight_filler {
+            type: "xavier"
+        }
+    }
+    param: "fc5_w"
+    param: "fc5_b"
+}
+layers {
+    name: "relu5_p"
+    type: RELU
+    bottom: "fc5_p"
+    top: "fc5_p"
+}
+layers {
 	name: "concat"
-	bottom: "conv4"
-	bottom: "conv4_p"
+	bottom: "fc5"
+	bottom: "fc5_p"
 	top: "concat"
 	type: CONCAT
 	concat_param {
@@ -252,10 +292,10 @@ layers {
 	}
 }
 layers {
-    name: "fc5"
+    name: "fc6"
     type: INNER_PRODUCT
     bottom: "concat"
-    top: "fc5"
+    top: "fc6"
     inner_product_param {
         num_output: 128
 	    weight_filler {
@@ -265,31 +305,11 @@ layers {
 }
 
 layers {
-    name: "relu5"
-    type: RELU
-    bottom: "fc5"
-    top: "fc5"
-}
-layers {
-    name: "fc6"
-    type: INNER_PRODUCT
-    bottom: "fc5"
-    top: "fc6"
-    inner_product_param {
-        num_output: 32
-        weight_filler {
-            type: "xavier"
-        }
-    }
-}
-
-layers {
     name: "relu6"
     type: RELU
     bottom: "fc6"
     top: "fc6"
 }
-
 layers {
     name: "fc7"
     type: INNER_PRODUCT

@@ -1,7 +1,8 @@
 import numpy as np
 import scipy.linalg as linalg
 import matplotlib.pyplot as plt
-from sklearn.decomposition import PCA
+import matplotlib.cm as cm
+from sklearn.decomposition import IncrementalPCA
 import h5py
 import cv2
 import os
@@ -15,7 +16,7 @@ sys.path.insert(0, caffe_root + 'python')
 
 #batchSize = 5
 templateSize = 10
-sampleSize = 1
+sampleSize = 30
 labelSize = 8
 PI = 3.1415926
 
@@ -57,30 +58,40 @@ def pose_estimation(P1, P2):
         transM[num] = np.concatenate((R*A,D),1)
     return dCenter, dSize, dAngle, transM
 
+def show_img(candidates):
+    for i in range(sampleSize):
+        for j in range(templateSize):
+            candImg = np.zeros((64,64), dtype = float)
+            candidate = np.reshape(candidates[i*templateSize+j],(64,64))
+            plt.subplot(sampleSize, templateSize, i*templateSize+j+1)
+            plt.imshow(candidate, cmap = cm.Greys_r, vmin = np.amin(candidate), vmax = np.amax(candidate))
+            plt.title('{:d}'.format(i*templateSize+j+1))
+            plt.axis('off')
+    plt.show()
+
 def sampling(win, sampleSize):
-    xSamples = np.rint(np.random.normal(win.center[0], 3, sampleSize)).astype(int)
-    ySamples = np.rint(np.random.normal(win.center[1], 3, sampleSize)).astype(int)
+    xSamples = np.rint(np.random.normal(win.center[0], 6, sampleSize)).astype(int)
+    ySamples = np.rint(np.random.normal(win.center[1], 6, sampleSize)).astype(int)
     angleSamples = np.random.normal(win.angle, 1, sampleSize)
-    widthSamples = np.rint(np.random.normal(win.size[0], 1, sampleSize)).astype(int)
-    heightSamples = np.rint(np.random.normal(win.size[1], 1, sampleSize)).astype(int)
-    winSample = winParam((0,0), 0, 0)
+    widthSamples = np.rint(np.random.normal(win.size[0], 3, sampleSize)).astype(int)
+    heightSamples = np.rint(np.random.normal(win.size[1], 3, sampleSize)).astype(int)
     winSamples = []
     winWeights = []
     for i in range(sampleSize):
+        winSample = winParam((0,0), 0, 0)
         winSample.center = (xSamples[i], ySamples[i])
         winSample.angle = angleSamples[i]
         winSample.size = (widthSamples[i], heightSamples[i])
         winSamples.append(winSample)
         #draw(videoWri, imgName, imgNum, winSample, lost)
         #cv2.waitKey(0)
-    for i in range(sampleSize):
-        print 'winsamples:', winSamples[i].center
+    #for i in range(sampleSize):
+        #print 'winsamples:', winSamples[i].center
     return winSamples
 
-def maxLikelihood(img, pca_mean, pca_eigens, winsNew):
+def maxLikelihood(img, ipca, winsNew):
     error = []
-    imcropLin = np.zeros((templateSize*sampleSize, 64*64*3), dtype = int)
-    candidate = np.zeros((3,64,64), dtype = int)
+    imcropLin = np.zeros((templateSize*sampleSize, 64*64), dtype = float)
     for i in range(templateSize*sampleSize):
         win = winsNew[i]
         affMat = cv2.getRotationMatrix2D(tuple(win.center), win.angle, 1.0)
@@ -90,28 +101,29 @@ def maxLikelihood(img, pca_mean, pca_eigens, winsNew):
         #cv2.imshow('crop',imcrop)
         #cv2.waitKey(0)
         imcrop = cv2.resize(imcrop,(64,64))
-        for k in range(3):
-            candidate[k] = imcrop[:,:,k]
-        imcropLin[i] = np.reshape(candidate, (1, 64*64*3))
-    imcropLin = imcropLin-pca_mean
-    if pca_eigens == []:
+        imcropGray = 0.114*imcrop[:,:,0]+0.587*imcrop[:,:,1]+0.299*imcrop[:,:,2]
+        imcropLin[i] = np.reshape(imcropGray, (1, 64*64))
+        #show_img(imcropLin[i])
+        #cv2.waitKey(0)
+    imcropLin = imcropLin-ipca.mean_
+    if ipca.components_ == []:
         score = np.sum(imcropLin**2, axis=1)
     else:
-        eigensSqr = np.dot(pca_eigens, pca_eigens.transpose())
+        eigensSqr = np.dot(ipca.components_.transpose(), ipca.components_)
         print eigensSqr.shape, imcropLin.shape
         diff = imcropLin-np.dot(imcropLin, eigensSqr)
         score = np.sum(diff**2, axis=1)
     ind = np.argmin(score)
-    print 'score', score
+    #print 'score', score
     print 'ind', ind
     return winsNew[ind]
 
 
     
-def prediction(net, imgName, win, templates, weights, pca_mean, pca_eigens):
+def prediction(net, imgName, win, templates, weights, ipca):
     winSamples = sampling(win, sampleSize)
-    winSamples = []
-    winSamples.append(win)
+    #winSamples = []
+    #winSamples.append(win)
     img = cv2.imread(imgName, 1)
     #cv2.imshow('img',img)
     candidates = []
@@ -142,9 +154,25 @@ def prediction(net, imgName, win, templates, weights, pca_mean, pca_eigens):
     for k in range(sampleSize):
         vertices[k*templateSize:(k+1)*templateSize] = np.array([winSamples[k].center[0]-winSamples[k].size[0]/2, winSamples[k].center[1]-winSamples[k].size[1]/2, winSamples[k].center[0]+winSamples[k].size[0]/2, winSamples[k].center[1]-winSamples[k].size[1]/2, winSamples[k].center[0]+winSamples[k].size[0]/2, winSamples[k].center[1]+winSamples[k].size[1]/2, winSamples[k].center[0]-winSamples[k].size[0]/2, winSamples[k].center[1]+winSamples[k].size[1]/2])
 
-    templates = (templates-XmeanM)/255.0
-    candidates = (candidates-XmeanM)/255.0
-    print 'diff between templates[0] and [1]:', templates[0]-templates[1]
+    #maxT = np.amax(np.amax(np.amax(templates,1),1),1)
+    #maxC = np.amax(np.amax(np.amax(candidates,1),1),1)
+    #maxT = np.reshape(maxT, maxT.shape+(1,1,1))
+    #maxC = np.reshape(maxC, maxC.shape+(1,1,1))
+
+    #templates = np.divide((templates-XmeanM), maxT)
+    #candidates = np.divide((candidates-XmeanM), maxC)
+    templates = templates-XmeanM
+    candidates = candidates-XmeanM
+
+    maxT = np.amax(np.amax(np.amax(np.absolute(templates),1),1),1)
+    maxC = np.amax(np.amax(np.amax(np.absolute(candidates),1),1),1)
+    maxT = np.reshape(maxT, maxT.shape+(1,1,1))
+    maxC = np.reshape(maxC, maxC.shape+(1,1,1))
+    templates = np.divide(templates,maxT)
+    candidates = np.divide(candidates,maxC)
+    print 'maxT', maxT[0:10]
+    print 'maxC', maxC[0:10]
+    #print 'diff between templates[0] and [1]:', templates[0]-templates[1]
     X = np.concatenate((templates, candidates), 1)
     print 'X.shape=', X.shape
     out = net.forward_all(data=X)
@@ -177,7 +205,7 @@ def prediction(net, imgName, win, templates, weights, pca_mean, pca_eigens):
             #print j, winsNew[j].center
     #print 'winsNew[0]:', winsNew[0].center, winsNew[0].size
     #print 'winsNew[1]:', winsNew[1].center, winsNew[1].size
-    winMax = maxLikelihood(img, pca_mean, pca_eigens, winsNew)
+    winMax = maxLikelihood(img, ipca, winsNew)
     print 'winMax:',winMax.center, winMax.size, winMax.angle
     print 'win:', win.center, win.size, win.angle
     return  winMax
@@ -198,7 +226,7 @@ def judgment(win, rect, lost):
         lost += 1
     return win, lost
 
-def update(templates, imgName, winMax):
+def update(templates, imgName, winMax, ipca):
     img = cv2.imread(imgName, 1)
     affMat = cv2.getRotationMatrix2D(tuple(winMax.center), winMax.angle, 1.0)
     rotatedSrc = cv2.warpAffine(img, affMat, (img.shape[1], img.shape[0]))
@@ -213,12 +241,11 @@ def update(templates, imgName, winMax):
     templates.pop(-1)
     templates.insert(1,template)
     #print templates[0]-templates[1]
-    templatesLin = np.reshape(templates, (len(templates), 64*64*3))
-    pca_mean = np.mean(templatesLin, 0)
-    templatesLin = templatesLin-np.reshape(pca_mean, (1,)+pca_mean.shape)
-    S, V, D = linalg.svd(templatesLin.transpose())
-    pca_eigens = S[:,0:10]
-    return templates, pca_mean, pca_eigens
+    templateGray = 0.114*template[0,:,:]+0.587*template[1,:,:]+0.299*template[2,:,:]
+    print templateGray.shape
+    templateGray = np.reshape(templateGray, (1, 64*64))
+    ipca.partial_fit(templateGray)
+    return templates, ipca
  
 def draw(videoWri, imgName, imgNum, win, lost):
     R = np.array([[math.cos(win.angle*PI/180), -math.sin(win.angle*PI/180)], [math.sin(win.angle*PI/180), math.cos(win.angle*PI/180)]])
@@ -249,9 +276,8 @@ if __name__ == '__main__':
         weights = np.zeros((templateSize*sampleSize), dtype = float)/(templateSize*sampleSize)
         weights[0] = 1
         win = winParam((0,0), (0,0), 0)
-        template = np.zeros((3,64,64), dtype = int)
         modelFile = 'train_val_affine_deploy.prototxt'
-        pretrainedFile = 'affine_iter_20000.caffemodel.backup'
+        pretrainedFile = 'affine_iter_20000.caffemodel'
         net = caffe.Net(modelFile, pretrainedFile)
         net.set_phase_test()
         net.set_mode_gpu()
@@ -265,22 +291,29 @@ if __name__ == '__main__':
             rect = np.array(line.split(' '), dtype = int)
             imgName = sequence + '/img/{:04d}.jpg'.format(imgNum)
             if imgNum == 1:
+                template = np.zeros((3,64,64), dtype = int)
                 win = winParam((rect[0]+rect[2]/2, rect[1]+rect[3]/2), (rect[2], rect[3]), 0)
                 img = cv2.imread(imgName, 1)
                 imcrop= img[rect[1]:rect[1]+rect[3], rect[0]:rect[0]+rect[2]]
                 imcrop = cv2.resize(imcrop, (64,64))
                 for k in range(3):
                     template[k] = imcrop[:,:,k]
+                templateGray = 0.114*template[0]+0.587*template[1]+0.299*template[2]
                 for j in range(templateSize):
                     templates.append(template)
-                pca_mean = np.reshape(template, (1,64*64*3))
-                videoWri = cv2.VideoWriter(seqName+'.avi', cv2.cv.CV_FOURCC('F','M','P','4'), 20, (img.shape[1], img.shape[0]))
+                pca_mean = np.reshape(templateGray, (1,64*64))
+                pca_data = np.tile(pca_mean, (templateSize,1))
+                print pca_data.shape
+                ipca = IncrementalPCA(n_components=10)
+                ipca.fit(pca_data)
+                print ipca.components_.shape, ipca.mean_.shape
+                videoWri = cv2.VideoWriter('result_videos/'+seqName+'.avi', cv2.cv.CV_FOURCC('F','M','P','4'), 20, (img.shape[1], img.shape[0]))
                 if(not videoWri.isOpened()):
                     print 'Unable to write the video'
             else:
-                winMax = prediction(net, imgName, win, templates, weights, pca_mean, pca_eigens)
+                winMax = prediction(net, imgName, win, templates, weights, ipca)
                 win, lost = judgment(winMax, rect, lost)
-                templates, pca_mean, pca_eigens = update(templates, imgName, win)
+                templates, ipca = update(templates, imgName, win, ipca)
                 draw(videoWri, imgName, imgNum, win, lost)
         #videoWri.release()
         #cv2.destroyAllWindows()
